@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-import uuid
 
 
 # Create your models here.
@@ -24,6 +23,7 @@ class UserAuthModelManager(BaseUserManager):
     def create_superuser(self, mobile, password=None):
         group = UserGroupModel.objects.get(name='Admin')
         user = self.create_user(mobile, group)
+        user.username = mobile
         user.is_superuser = True
         user.is_staff = True
         user.save()
@@ -32,9 +32,8 @@ class UserAuthModelManager(BaseUserManager):
 
 class UserAuthModel(AbstractUser):
     group = models.ForeignKey(UserGroupModel, related_name='user_group', on_delete=models.CASCADE, null=False, default=2)
-    username = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
+    username = models.CharField(max_length=11, unique=False, null=False, blank=False, verbose_name='Username')
     mobile = models.CharField(max_length=11, unique=True, null=False, blank=False, verbose_name='Mobile Number')
-    fcm_key = models.CharField(max_length=80, null=False, blank=False, default='0')
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
@@ -52,6 +51,7 @@ class UserAuthModel(AbstractUser):
 
 class UserDetailModel(models.Model):
     user = models.OneToOneField(UserAuthModel, related_name='user_detail', on_delete=models.CASCADE, null=False)
+    fcm_key = models.CharField(max_length=80, null=False, blank=False, default='0')
     name = models.CharField(max_length=80, null=False, blank=False, verbose_name='Name')
     date_of_birth = models.DateField(null=False, blank=False, verbose_name='Date of Birth')
     nid_number = models.CharField(max_length=40, unique=True, null=False, blank=False, verbose_name='NID Number', default='0')
@@ -67,3 +67,14 @@ class UserDetailModel(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class UserOTPModel(models.Model):
+    otp_number = models.IntegerField(unique=False, null=False, blank=False, verbose_name='OTP Number')
+    otp_tried = models.IntegerField(null=False, blank=False, default=0, verbose_name='OTP Tried')
+    user = models.ForeignKey(UserAuthModel, related_name='user_otp_data', on_delete=models.CASCADE, null=False)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.otp_number
