@@ -14,3 +14,9 @@ class UserAuthSerializer(serializers.ModelSerializer):
                 return 'exists'
             else:
                 return super(UserAuthSerializer, self).is_valid()
+
+
+class UserFCMKeySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAuthModel
+        fields = ['fcm_key']
