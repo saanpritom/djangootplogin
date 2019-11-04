@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
-from CustomUsers.views import UserAuthAPIView
+from CustomUsers.views import UserAuthAPIView, UserFCMKeyView
 
 urlpatterns = [
     # User token management views
@@ -14,4 +14,5 @@ urlpatterns = [
 
     # User Model Management views
     path('login/', UserAuthAPIView.as_view(), name='user-login-api-view'),
+    path('fcm/key/<slug:pk>/', UserFCMKeyView.as_view(), name='user-fcm-api-view'),
 ]

@@ -18,11 +18,13 @@ class UserAuthAPIView(generics.CreateAPIView):
         try:
             if result == 'exists':
                 headers = None
+                response_text = get_user_model().objects.get(mobile=request.data['mobile']).id
             else:
                 self.perform_create(serializer)
                 headers = self.get_success_headers(serializer.data)
+                response_text = get_user_model().objects.get(mobile=request.data['mobile']).id
             OTPManager().initialize_otp(get_user_model().objects.get(mobile=serializer.initial_data['mobile']).id)
-            return Response({'result': 'success'}, status=status.HTTP_201_CREATED, headers=headers)
+            return Response({'result': response_text}, status=status.HTTP_201_CREATED, headers=headers)
         except Exception:
             return Response({'result': 'error'}, status=status.HTTP_406_NOT_ACCEPTABLE, headers=None)
 
