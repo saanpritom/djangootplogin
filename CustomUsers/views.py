@@ -15,11 +15,16 @@ class UserAuthAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         result = serializer.is_valid(raise_exception=True)
-        if result == 'exists':
-            headers = None
-            otp = OTPManager().initialize_otp(get_user_model().objects.get(mobile=serializer.initial_data['mobile']).id)
-        else:
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            otp = OTPManager().initialize_otp(get_user_model().objects.get(mobile=serializer.initial_data['mobile']).id)
-        return Response({'otp': otp}, status=status.HTTP_201_CREATED, headers=headers)
+        try:
+            if result == 'exists':
+                headers = None
+                OTPManager().initialize_otp(get_user_model().objects.get(mobile=serializer.initial_data['mobile']).id)
+                result = 'success'
+            else:
+                self.perform_create(serializer)
+                headers = self.get_success_headers(serializer.data)
+                OTPManager().initialize_otp(get_user_model().objects.get(mobile=serializer.initial_data['mobile']).id)
+                result = 'success'
+            return Response({'result': result}, status=status.HTTP_201_CREATED, headers=headers)
+        except Exception:
+            return Response({'result': 'error'}, status=status.HTTP_406_NOT_ACCEPTABLE, headers=None)
