@@ -6,7 +6,6 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.conf import settings
 from CustomUsers.models import UserOTPModel
-# from configs.WebsiteSettings import MiscellaneousSettings, SettingsVariable
 import pytz
 
 

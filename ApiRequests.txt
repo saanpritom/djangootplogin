@@ -1,0 +1,15 @@
+// Sign In or Sign up Request
+
+curl -X POST -H "Content-Type: application/json" -d '{"mobile": "01732844254"}' http://localhost:8000/api/v1/users/login/
+
+Response: User ID
+Next Step: Save User ID for the next request
+
+
+// You need to grab FCM Key from the Firebase and send it to the Taala Server
+// Send FCM Key for the user to the Taala Server
+
+curl -X PUT -H "Content-Type: application/json" -d '{"fcm_key": "232543543534"}' http://localhost:8000/api/v1/users/fcm/key/bd18403e982b474da2fec4237badfad6/
+
+Response: If success you will get the saved fcm key
+Next Step: Redirect the user with the User ID to the OTP Verification Page 

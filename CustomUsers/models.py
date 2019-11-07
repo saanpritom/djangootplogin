@@ -34,7 +34,7 @@ class UserAuthModelManager(BaseUserManager):
 
 class UserAuthModel(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    group = models.ForeignKey(UserGroupModel, related_name='user_group', on_delete=models.CASCADE, null=False, default='282ed101-f9c6-40d7-9a6d-9eb926d053ba')
+    group = models.ForeignKey(UserGroupModel, related_name='user_group', on_delete=models.CASCADE, null=False, default='650d3bdb0c8145d8a0f9cb8d56dd4afb')
     username = models.CharField(max_length=11, unique=False, null=False, blank=False, verbose_name='Username')
     mobile = models.CharField(max_length=11, unique=True, null=False, blank=False, verbose_name='Mobile Number')
     fcm_key = models.CharField(max_length=80, null=False, blank=False, default='0')
