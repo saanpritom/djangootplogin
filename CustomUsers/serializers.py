@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from CustomUsers.models import UserAuthModel
+from CustomUsers.models import UserAuthModel, UserOTPModel
 
 
 class UserAuthSerializer(serializers.ModelSerializer):
@@ -20,3 +20,9 @@ class UserFCMKeySerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAuthModel
         fields = ['fcm_key']
+
+
+class OTPVerificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserOTPModel
+        fields = ['otp_number']

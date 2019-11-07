@@ -12,4 +12,7 @@ Next Step: Save User ID for the next request
 curl -X PUT -H "Content-Type: application/json" -d '{"fcm_key": "232543543534"}' http://localhost:8000/api/v1/users/fcm/key/bd18403e982b474da2fec4237badfad6/
 
 Response: If success you will get the saved fcm key
-Next Step: Redirect the user with the User ID to the OTP Verification Page 
+Next Step: Redirect the user with the User ID to the OTP Verification Page
+
+
+curl -X PUT -H "Content-Type: application/json" -d '{"otp_number": "34565"}' http://localhost:8000/api/v1/users/otp/verify/bd18403e982b474da2fec4237badfad6/
