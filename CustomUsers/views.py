@@ -9,7 +9,7 @@ from CustomUsers.models import UserDetailModel, UserOTPModel
 from CustomUsers.serializers import (UserAuthSerializer, UserFCMKeySerializer, OTPVerificationSerializer,
                                      UserDetailBasicSerializer, UserIsAgreedSerializer, UserDetailAddressSerializer)
 from CustomUsers.scripts import OTPManager, UserInformationCheck
-from CustomUsers.permissions import IsUserExists
+from CustomUsers.permissions import IsUserExists, UserObjectPermission
 from CustomUsers.tasks import initialize_otp_and_sms_otp
 
 
@@ -104,7 +104,7 @@ class UserIsAgreedUpdateView(generics.UpdateAPIView):
 
     def get_object(self):
         obj = get_object_or_404(self.queryset, user=get_user_model().objects.get(Q(id=self.request.user.id) & Q(is_active=True)))
-        super().check_object_permissions(self.request, obj)
+        UserObjectPermission().has_object_permission(self.request, obj)
         return obj
 
 
@@ -115,5 +115,5 @@ class UserDetailAddressUpdateView(generics.UpdateAPIView):
 
     def get_object(self):
         obj = get_object_or_404(self.queryset, user=get_user_model().objects.get(Q(id=self.request.user.id) & Q(is_active=True)))
-        super().check_object_permissions(self.request, obj)
+        UserObjectPermission().has_object_permission(self.request, obj)
         return obj

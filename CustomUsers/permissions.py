@@ -1,6 +1,7 @@
 from rest_framework import permissions
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django.core.exceptions import PermissionDenied
 
 
 class IsUserExists(permissions.BasePermission):
@@ -15,8 +16,8 @@ class IsUserExists(permissions.BasePermission):
 
 class UserObjectPermission(permissions.BasePermission):
 
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, obj):
         if obj.user.id == request.user.id:
             return True
         else:
-            return False
+            raise PermissionDenied
