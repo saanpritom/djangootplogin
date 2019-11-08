@@ -32,3 +32,14 @@ class UserDetailBasicSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserDetailModel
         fields = ['user', 'name', 'date_of_birth', 'nid_number', 'gender']
+
+
+class UserIsAgreedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserDetailModel
+        fields = ['is_agreed']
+
+    def validate_is_agreed(self, value):
+        if value is False:
+            raise serializers.ValidationError("You must have to accept the Terms and Conditions")
+        return value

@@ -2,12 +2,14 @@ from rest_framework import generics, status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 from CustomUsers.models import UserDetailModel, UserOTPModel
-from CustomUsers.serializers import UserAuthSerializer, UserFCMKeySerializer, OTPVerificationSerializer, UserDetailBasicSerializer
+from CustomUsers.serializers import (UserAuthSerializer, UserFCMKeySerializer, OTPVerificationSerializer,
+                                     UserDetailBasicSerializer, UserIsAgreedSerializer)
 from CustomUsers.scripts import OTPManager
-from CustomUsers.permissions import IsUserExists
+from CustomUsers.permissions import IsUserExists, UserObjectPermission
 from CustomUsers.tasks import initialize_otp_and_sms_otp
 
 
@@ -88,3 +90,14 @@ class UserDetailBasicCreateView(generics.CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         except Exception:
             return Response({'result': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED, headers=None)
+
+
+class UserIsAgreedUpdateView(generics.UpdateAPIView):
+    queryset = UserDetailModel
+    serializer_class = UserIsAgreedSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        obj = get_object_or_404(self.queryset, user=get_user_model().objects.get(Q(id=self.request.user.id) & Q(is_active=True)))
+        super().check_object_permissions(self.request, obj)
+        return obj
