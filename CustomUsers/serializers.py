@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from CustomUsers.models import UserAuthModel, UserOTPModel
+from CustomUsers.models import UserAuthModel, UserDetailModel, UserOTPModel
 
 
 class UserAuthSerializer(serializers.ModelSerializer):
@@ -26,3 +26,9 @@ class OTPVerificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserOTPModel
         fields = ['otp_number']
+
+
+class UserDetailBasicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserDetailModel
+        fields = ['user', 'name', 'date_of_birth', 'nid_number', 'gender']

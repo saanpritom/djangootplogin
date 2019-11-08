@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
-from CustomUsers.views import UserAuthAPIView, UserFCMKeyView, UserOTPVerificationView
+from CustomUsers.views import UserAuthAPIView, UserFCMKeyView, UserOTPVerificationView, UserDetailBasicCreateView
 
 urlpatterns = [
     # User token management views
@@ -15,5 +15,6 @@ urlpatterns = [
     # User Model Management views
     path('login/', UserAuthAPIView.as_view(), name='user-login-api-view'),
     path('fcm/key/<slug:pk>/', UserFCMKeyView.as_view(), name='user-fcm-api-view'),
-    path('otp/verify/<slug:pk>/', UserOTPVerificationView.as_view(), name='otp-verification-view')
+    path('otp/verify/<slug:pk>/', UserOTPVerificationView.as_view(), name='otp-verification-view'),
+    path('detail/create/', UserDetailBasicCreateView.as_view(), name='user-detail-basic-create-view'),
 ]

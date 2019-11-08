@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.db.models import Q
 from django.contrib.auth import get_user_model
-from CustomUsers.models import UserOTPModel
-from CustomUsers.serializers import UserAuthSerializer, UserFCMKeySerializer, OTPVerificationSerializer
+from CustomUsers.models import UserDetailModel, UserOTPModel
+from CustomUsers.serializers import UserAuthSerializer, UserFCMKeySerializer, OTPVerificationSerializer, UserDetailBasicSerializer
 from CustomUsers.scripts import OTPManager
 from CustomUsers.permissions import IsUserExists
 from CustomUsers.tasks import initialize_otp_and_sms_otp
@@ -71,3 +71,20 @@ class UserOTPVerificationView(generics.UpdateAPIView):
         else:
             result['tokens'] = ''
         return Response(result)
+
+
+class UserDetailBasicCreateView(generics.CreateAPIView):
+    queryset = UserDetailModel
+    serializer_class = UserDetailBasicSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.validated_data['user_id'] = request.user.id
+        try:
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        except Exception:
+            return Response({'result': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED, headers=None)
