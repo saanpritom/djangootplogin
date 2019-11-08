@@ -1,6 +1,7 @@
 from rest_framework import generics, status
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 from CustomUsers.models import UserOTPModel
@@ -46,6 +47,13 @@ class UserOTPVerificationView(generics.UpdateAPIView):
     serializer_class = OTPVerificationSerializer
     permission_classes = [AllowAny]
 
+    def get_tokens_for_user(self, user):
+        refresh = RefreshToken.for_user(user)
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
+
     def get_object(self):
         obj = self.queryset.objects.filter(Q(user=get_user_model().objects.get(id=self.kwargs['pk'])) & Q(is_active=True))
         return obj
@@ -58,9 +66,7 @@ class UserOTPVerificationView(generics.UpdateAPIView):
         serializer.is_valid(raise_exception=True)
         result['otp_status'] = OTPManager().check_user_inputed_otp(int(request.data['otp_number']), self.kwargs['pk'])
         if result['otp_status'] == 'otp matched':
-            result['access'] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiY29sZF9zdHVmZiI6IuKYgyIsImV4cCI6MTIzNDU2LCJqdGkiOiJmZDJmOWQ1ZTFhN2M0MmU4OTQ5MzVlMzYyYmNhOGJjYSJ9.NHlztMGER7UADHZJlxNG0WSi22a2KaYSfd1S-AuT7lU"
-            result['refresh'] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiY29sZF9zdHVmZiI6IuKYgyIsImV4cCI6MTIzNDU2LCJqdGkiOiJmZDJmOWQ1ZTFhN2M0MmU4OTQ5MzVlMzYyYmNhOGJjYSJ9.NHlztMGER7UADHZJlxNG0WSi22a2KaYSfd1S-AuT7lU"
+            result['tokens'] = self.get_tokens_for_user(get_user_model().objects.get(id=self.kwargs['pk']))
         else:
-            result['access'] = ''
-            result['refresh'] = ''
+            result['tokens'] = ''
         return Response(result)
