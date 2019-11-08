@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from CustomUsers.models import UserOTPModel
 from CustomUsers.serializers import UserAuthSerializer, UserFCMKeySerializer, OTPVerificationSerializer
 from CustomUsers.scripts import OTPManager
+from CustomUsers.permissions import IsUserExists
 from CustomUsers.tasks import initialize_otp_and_sms_otp
 
 
@@ -35,7 +36,7 @@ class UserAuthAPIView(generics.CreateAPIView):
 class UserFCMKeyView(generics.UpdateAPIView):
     queryset = get_user_model()
     serializer_class = UserFCMKeySerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsUserExists]
 
     def perform_update(self, serializer):
         super().perform_update(serializer)
@@ -45,7 +46,7 @@ class UserFCMKeyView(generics.UpdateAPIView):
 class UserOTPVerificationView(generics.UpdateAPIView):
     queryset = UserOTPModel
     serializer_class = OTPVerificationSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsUserExists]
 
     def get_tokens_for_user(self, user):
         refresh = RefreshToken.for_user(user)
