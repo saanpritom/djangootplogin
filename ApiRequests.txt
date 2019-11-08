@@ -27,3 +27,17 @@ Response: If success you will receive access token and refresh token save it for
 curl -X POST -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTczMjU5NDQ5LCJqdGkiOiIxMTAwMTg1ZGUzMWY0ZTQ3OWNmNTAxMzhkYTNjODU2ZCIsInVzZXJfaWQiOiIwY2Y5MGI4ZC0xOTQ5LTQ5OWMtODdmNS1mOTI3ODQ0MWI5MTEifQ.Z97E5Qokagml8jGDfVycs9hthwzHRYzjTwGjuJhJQbw"   -H "Content-Type: application/json" -d '{"user": "37b6998be19845899ed45bc66c4dd8ee", "name": "Jhontu Molla", "date_of_birth": "1987-11-23", "nid_number": "3245345345", "gender": "Male"}' http://localhost:8000/api/v1/users/detail/create/
 
 Response: If success you will get the object instance
+
+
+// The user terms and policy agreed API
+
+curl -X PUT -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTczMjU5NDQ5LCJqdGkiOiIxMTAwMTg1ZGUzMWY0ZTQ3OWNmNTAxMzhkYTNjODU2ZCIsInVzZXJfaWQiOiIwY2Y5MGI4ZC0xOTQ5LTQ5OWMtODdmNS1mOTI3ODQ0MWI5MTEifQ.Z97E5Qokagml8jGDfVycs9hthwzHRYzjTwGjuJhJQbw" -H "Content-Type: application/json" -d '{"is_agreed": "True"}' http://localhost:8000/api/v1/users/detail/agreed/
+
+Response: If success you will get the instance
+
+
+// Now add the user address information
+
+curl -X PUT -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTczMjU5NDQ5LCJqdGkiOiIxMTAwMTg1ZGUzMWY0ZTQ3OWNmNTAxMzhkYTNjODU2ZCIsInVzZXJfaWQiOiIwY2Y5MGI4ZC0xOTQ5LTQ5OWMtODdmNS1mOTI3ODQ0MWI5MTEifQ.Z97E5Qokagml8jGDfVycs9hthwzHRYzjTwGjuJhJQbw" -H "Content-Type: application/json" -d '{"area": "Gulshan", "address": "Circle Gulshan 2, Dhaka, Bangladesh"}' http://localhost:8000/api/v1/users/detail/address/update/
+
+Response: If success you will get the instance

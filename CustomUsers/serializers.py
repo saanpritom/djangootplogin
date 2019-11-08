@@ -43,3 +43,9 @@ class UserIsAgreedSerializer(serializers.ModelSerializer):
         if value is False:
             raise serializers.ValidationError("You must have to accept the Terms and Conditions")
         return value
+
+
+class UserDetailAddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserDetailModel
+        fields = ['area', 'address']

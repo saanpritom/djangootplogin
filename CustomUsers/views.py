@@ -7,9 +7,9 @@ from django.db.models import Q
 from django.contrib.auth import get_user_model
 from CustomUsers.models import UserDetailModel, UserOTPModel
 from CustomUsers.serializers import (UserAuthSerializer, UserFCMKeySerializer, OTPVerificationSerializer,
-                                     UserDetailBasicSerializer, UserIsAgreedSerializer)
+                                     UserDetailBasicSerializer, UserIsAgreedSerializer, UserDetailAddressSerializer)
 from CustomUsers.scripts import OTPManager
-from CustomUsers.permissions import IsUserExists, UserObjectPermission
+from CustomUsers.permissions import IsUserExists
 from CustomUsers.tasks import initialize_otp_and_sms_otp
 
 
@@ -95,6 +95,17 @@ class UserDetailBasicCreateView(generics.CreateAPIView):
 class UserIsAgreedUpdateView(generics.UpdateAPIView):
     queryset = UserDetailModel
     serializer_class = UserIsAgreedSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        obj = get_object_or_404(self.queryset, user=get_user_model().objects.get(Q(id=self.request.user.id) & Q(is_active=True)))
+        super().check_object_permissions(self.request, obj)
+        return obj
+
+
+class UserDetailAddressUpdateView(generics.UpdateAPIView):
+    queryset = UserDetailModel
+    serializer_class = UserDetailAddressSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
