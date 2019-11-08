@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from CustomUsers.models import UserDetailModel, UserOTPModel
 from CustomUsers.serializers import (UserAuthSerializer, UserFCMKeySerializer, OTPVerificationSerializer,
                                      UserDetailBasicSerializer, UserIsAgreedSerializer, UserDetailAddressSerializer)
-from CustomUsers.scripts import OTPManager
+from CustomUsers.scripts import OTPManager, UserInformationCheck
 from CustomUsers.permissions import IsUserExists
 from CustomUsers.tasks import initialize_otp_and_sms_otp
 
@@ -67,11 +67,16 @@ class UserOTPVerificationView(generics.UpdateAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        result['otp_status'] = OTPManager().check_user_inputed_otp(int(request.data['otp_number']), self.kwargs['pk'])
-        if result['otp_status'] == 'otp matched':
+        result['message'] = OTPManager().check_user_inputed_otp(int(request.data['otp_number']), self.kwargs['pk'])
+        if result['message'] == 'otp matched':
             result['tokens'] = self.get_tokens_for_user(get_user_model().objects.get(id=self.kwargs['pk']))
         else:
             result['tokens'] = ''
+        result['user_detail'] = UserInformationCheck().is_user_detail_exists(self.kwargs['pk'])
+        result['product_category'] = "0"
+        result['is_agree'] = UserInformationCheck().is_user_agreed(self.kwargs['pk'], result['user_detail'])
+        result['address_info'] = UserInformationCheck().is_address_exists(self.kwargs['pk'], result['user_detail'])
+        result['is_verified'] = UserInformationCheck().is_user_verified(self.kwargs['pk'], result['user_detail'])
         return Response(result)
 
 

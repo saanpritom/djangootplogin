@@ -5,7 +5,7 @@ from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.conf import settings
-from CustomUsers.models import UserOTPModel
+from CustomUsers.models import UserOTPModel, UserDetailModel
 import pytz
 
 
@@ -150,3 +150,42 @@ class OTPManager(object):
                 return 'expired'
         else:
             return 'limit out'
+
+
+class UserInformationCheck(object):
+
+    def is_user_detail_exists(self, user_id):
+        if UserDetailModel.objects.filter(user=get_user_model().objects.get(Q(id=user_id) & Q(is_active=True))).count() > 0:
+            return "1"
+        else:
+            return "0"
+
+    def is_user_agreed(self, user_id, is_exists):
+        if is_exists == "1":
+            obj = UserDetailModel.objects.get(user=get_user_model().objects.get(Q(id=user_id) & Q(is_active=True)))
+            if obj.is_agreed is True:
+                return "1"
+            else:
+                return "0"
+        else:
+            return "0"
+
+    def is_address_exists(self, user_id, is_exists):
+        if is_exists == "1":
+            obj = UserDetailModel.objects.get(user=get_user_model().objects.get(Q(id=user_id) & Q(is_active=True)))
+            if obj.area != '' or obj.address != 'TON618':
+                return "1"
+            else:
+                return "0"
+        else:
+            return "0"
+
+    def is_user_verified(self, user_id, is_exists):
+        if is_exists == "1":
+            obj = UserDetailModel.objects.get(user=get_user_model().objects.get(Q(id=user_id) & Q(is_active=True)))
+            if obj.is_verified is True:
+                return "1"
+            else:
+                return "0"
+        else:
+            return "0"
